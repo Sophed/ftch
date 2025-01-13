@@ -70,6 +70,8 @@ fn format_duration(seconds: i64) -> String {
     if minutes > 0 {
         parts.push(format!("{}m", minutes));
     }
-    parts.push(format!("{}s", seconds)); // always include seconds
+    if hours < 1 { // hide seconds with longer uptimes
+        parts.push(format!("{}s", seconds));
+    }
     parts.join(" ")
 }
