@@ -2,5 +2,9 @@
 name = "ftch"
 version = "0.1.0"
 edition = "2024"
+author = "sophsystems"
+description = "A fast, tiny system fetch utility."
+repository = "https://github.com/Sophed/ftch"
+license = "MIT"
 
 [dependencies]
