@@ -11,8 +11,9 @@ pub fn dekstop() -> String {
 fn linux() -> String {
     env::var("XDG_DESKTOP_SESSION")
     .unwrap_or_else(|_| env::var("XDG_CURRENT_DESKTOP")
+    .unwrap_or_else(|_| env::var("XDG_SESSION_DESKTOP")
     .unwrap_or_else(|_| env::var("DESKTOP_SESSION")
-    .unwrap_or("unknown".to_string())))
+    .unwrap_or("unknown".to_string()))))
 }
 
 fn mac() -> String {

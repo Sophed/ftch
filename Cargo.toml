@@ -1,6 +1,6 @@
 [package]
 name = "ftch"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 authors = [ "sophsystems" ]
 description = "A fast, tiny system fetch utility."
