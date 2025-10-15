@@ -1,0 +1,74 @@
+name: Build
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+      
+      - name: Build Windows
+        run: cargo build --release --target x86_64-pc-windows-msvc
+        
+      - name: Upload Windows Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-ftch
+          path: target/x86_64-pc-windows-msvc/release/ftch.exe
+  
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-apple-darwin,aarch64-apple-darwin
+      
+      - name: Build macOS Intel
+        run: cargo build --release --target x86_64-apple-darwin
+        
+      - name: Build macOS Apple Silicon
+        run: cargo build --release --target aarch64-apple-darwin
+        
+      - name: Create macOS Bundle
+        run: |
+          mkdir -p macos-ftch
+          cp target/x86_64-apple-darwin/release/ftch macos-ftch/ftch-intel
+          cp target/aarch64-apple-darwin/release/ftch macos-ftch/ftch-arm
+          chmod +x macos-ftch/*
+          
+      - name: Upload macOS Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-ftch
+          path: macos-ftch/*
+  
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-unknown-linux-gnu
+      
+      - name: Build Linux
+        run: cargo build --release --target x86_64-unknown-linux-gnu
+        
+      - name: Upload Linux Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-ftch
+          path: target/x86_64-unknown-linux-gnu/release/ftch
