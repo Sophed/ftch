@@ -30,7 +30,12 @@ fn linux() -> String {
 }
 
 fn windows() -> String {
-    "Windows".to_string() // TODO: differentiate between w10 & w11 for proper support
+    let cmd = Command::new("systeminfo")
+        .output()
+        .expect("failed to fetch system info");
+    let out = String::from_utf8_lossy(&cmd.stdout).trim().to_string();
+    let line: String = out.split("\n").filter(|l| l.contains("OS Name:")).collect();
+    line.replace("OS Name:", "").replace("Microsoft", "").trim().to_string()
 }
 
 fn mac() -> String {

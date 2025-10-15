@@ -3,6 +3,8 @@ use std::env;
 pub fn dekstop() -> String {
     if cfg!(target_os = "macos") {
         mac()
+    } else if cfg!(target_os = "windows") {
+        windows()
     } else {
         linux() // default
     }
@@ -14,6 +16,10 @@ fn linux() -> String {
     .unwrap_or_else(|_| env::var("XDG_SESSION_DESKTOP")
     .unwrap_or_else(|_| env::var("DESKTOP_SESSION")
     .unwrap_or("unknown".to_string()))))
+}
+
+fn windows() -> String {
+    "dwm.exe".to_string()
 }
 
 fn mac() -> String {
