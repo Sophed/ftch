@@ -46,7 +46,6 @@ fn windows() -> Result<i64, Error> {
 
     let output_str = String::from_utf8_lossy(&output.stdout).trim().to_string();
 
-    // Parse the total seconds as a float and convert to i64
     let seconds: f64 = output_str
         .parse()
         .map_err(|_| Error::new(ErrorKind::InvalidData, "invalid seconds format"))?;
@@ -100,7 +99,7 @@ fn format_duration(total_seconds: i64) -> String {
         let value = remaining / unit;
         remaining %= unit;
 
-        if value > 0 && !(suffix == "s" && total_seconds >= HOUR) {
+        if value > 0 {
             parts.push(format!("{value}{suffix}"));
         }
     }
