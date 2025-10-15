@@ -1,6 +1,6 @@
 use std::env;
 
-pub fn dekstop() -> String {
+pub fn desktop() -> String {
     if cfg!(target_os = "macos") {
         mac()
     } else if cfg!(target_os = "windows") {
