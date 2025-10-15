@@ -6,23 +6,26 @@ pub fn desktop() -> String {
     } else if cfg!(target_os = "windows") {
         windows()
     } else {
-        linux() // default
+        linux()
     }
 }
 
 fn linux() -> String {
-    env::var("XDG_DESKTOP_SESSION").unwrap_or_else(|_| {
-        env::var("XDG_CURRENT_DESKTOP").unwrap_or_else(|_| {
-            env::var("XDG_SESSION_DESKTOP")
-                .unwrap_or_else(|_| env::var("DESKTOP_SESSION").unwrap_or("unknown".to_string()))
-        })
-    })
+    [
+        "XDG_DESKTOP_SESSION",
+        "XDG_CURRENT_DESKTOP",
+        "XDG_SESSION_DESKTOP",
+        "DESKTOP_SESSION",
+    ]
+    .iter()
+    .find_map(|var| env::var(var).ok())
+    .unwrap_or_else(|| "Unknown".to_string())
 }
 
 fn windows() -> String {
-    "dwm.exe".to_string() // possible later detect is GlazeWM or komorebi is running and show those
+    "dwm.exe".to_string()
 }
 
 fn mac() -> String {
-    "Aqua".to_string() // macOS typically Aqua - check properly in a future release
+    "Aqua".to_string()
 }

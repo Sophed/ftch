@@ -1,0 +1,12 @@
+max_width = 100
+edition = "2024"
+imports_granularity = "Module"
+imports_layout = "Vertical"
+reorder_imports = true
+group_imports = "StdExternalCrate"
+use_field_init_shorthand = true
+use_try_shorthand = true
+merge_derives = true
+remove_nested_parens = true
+newline_style = "Unix"
+trailing_comma = "Vertical"
