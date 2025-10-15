@@ -11,15 +11,16 @@ pub fn dekstop() -> String {
 }
 
 fn linux() -> String {
-    env::var("XDG_DESKTOP_SESSION")
-    .unwrap_or_else(|_| env::var("XDG_CURRENT_DESKTOP")
-    .unwrap_or_else(|_| env::var("XDG_SESSION_DESKTOP")
-    .unwrap_or_else(|_| env::var("DESKTOP_SESSION")
-    .unwrap_or("unknown".to_string()))))
+    env::var("XDG_DESKTOP_SESSION").unwrap_or_else(|_| {
+        env::var("XDG_CURRENT_DESKTOP").unwrap_or_else(|_| {
+            env::var("XDG_SESSION_DESKTOP")
+                .unwrap_or_else(|_| env::var("DESKTOP_SESSION").unwrap_or("unknown".to_string()))
+        })
+    })
 }
 
 fn windows() -> String {
-    "dwm.exe".to_string()
+    "dwm.exe".to_string() // possible later detect is GlazeWM or komorebi is running and show those
 }
 
 fn mac() -> String {

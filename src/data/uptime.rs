@@ -1,9 +1,14 @@
-use std::{fs, io::Error, process::Command, time::{SystemTime, UNIX_EPOCH}};
+use std::{
+    fs,
+    io::Error,
+    process::Command,
+    time::{SystemTime, UNIX_EPOCH},
+};
 
 pub fn uptime() -> String {
     match seconds() {
         Ok(seconds) => format_duration(seconds),
-        Err(_) => "unknown".to_string(),
+        Err(_) => "Unknown".to_string(),
     }
 }
 
@@ -21,7 +26,7 @@ fn linux() -> Result<i64, Error> {
             let parts: Vec<&str> = s.split(".").collect();
             let seconds = parts.get(0).unwrap();
             Ok(seconds.parse::<i64>().unwrap())
-        },
+        }
         Err(e) => Err(e),
     }
 }
@@ -36,7 +41,14 @@ fn mac() -> i64 {
     let output_str = String::from_utf8_lossy(&output.stdout);
 
     // boot time in seconds
-    let boot_time_str = output_str.split(',').next().unwrap_or("").split('=').nth(1).unwrap_or("").trim();
+    let boot_time_str = output_str
+        .split(',')
+        .next()
+        .unwrap_or("")
+        .split('=')
+        .nth(1)
+        .unwrap_or("")
+        .trim();
     let boot_time = boot_time_str.parse::<i64>().unwrap_or(0);
 
     // current (s) since UNIX epoch
@@ -70,7 +82,8 @@ fn format_duration(seconds: i64) -> String {
     if minutes > 0 {
         parts.push(format!("{}m", minutes));
     }
-    if hours < 1 { // hide seconds with longer uptimes
+    if hours < 1 {
+        // hide seconds with longer uptimes
         parts.push(format!("{}s", seconds));
     }
     parts.join(" ")

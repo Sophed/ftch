@@ -1,5 +1,5 @@
-pub mod distro;
 pub mod desktop;
+pub mod distro;
 pub mod shell;
 pub mod uptime;
 
