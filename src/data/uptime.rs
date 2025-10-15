@@ -1,90 +1,109 @@
-use std::{
-    fs,
-    io::Error,
-    process::Command,
-    time::{SystemTime, UNIX_EPOCH},
+use std::fs;
+use std::io::{
+    Error,
+    ErrorKind,
+};
+use std::process::Command;
+use std::time::{
+    SystemTime,
+    UNIX_EPOCH,
 };
 
 pub fn uptime() -> String {
-    match seconds() {
-        Ok(seconds) => format_duration(seconds),
-        Err(_) => "Unknown".to_string(),
-    }
+    seconds()
+        .map(format_duration)
+        .unwrap_or_else(|_| "Unknown".to_string())
 }
 
 fn seconds() -> Result<i64, Error> {
     if cfg!(target_os = "macos") {
-        Ok(mac())
+        mac()
+    } else if cfg!(target_os = "windows") {
+        windows()
     } else {
         linux()
     }
 }
 
 fn linux() -> Result<i64, Error> {
-    match fs::read_to_string("/proc/uptime") {
-        Ok(s) => {
-            let parts: Vec<&str> = s.split(".").collect();
-            let seconds = parts.get(0).unwrap();
-            Ok(seconds.parse::<i64>().unwrap())
-        }
-        Err(e) => Err(e),
-    }
+    let contents = fs::read_to_string("/proc/uptime")?;
+
+    contents
+        .split_once('.')
+        .and_then(|(secs, _)| secs.trim().parse().ok())
+        .ok_or_else(|| Error::new(ErrorKind::InvalidData, "invalid uptime format"))
 }
 
-fn mac() -> i64 {
-    // Use `sysctl` command on macOS to get uptime
+fn windows() -> Result<i64, Error> {
+    let output = Command::new("powershell")
+        .args(&[
+            "-NoProfile",
+            "-Command",
+            "((Get-Date) - (Get-CimInstance Win32_OperatingSystem).LastBootUpTime).TotalSeconds",
+        ])
+        .output()
+        .map_err(|_| Error::new(ErrorKind::Other, "failed to execute powershell"))?;
+
+    let output_str = String::from_utf8_lossy(&output.stdout).trim().to_string();
+
+    // Parse the total seconds as a float and convert to i64
+    let seconds: f64 = output_str
+        .parse()
+        .map_err(|_| Error::new(ErrorKind::InvalidData, "invalid seconds format"))?;
+
+    Ok(seconds as i64)
+}
+
+fn mac() -> Result<i64, Error> {
     let output = Command::new("sysctl")
         .arg("-n")
         .arg("kern.boottime")
         .output()
-        .expect("failed to execute process");
+        .map_err(|_| Error::new(ErrorKind::Other, "failed to execute sysctl"))?;
+
     let output_str = String::from_utf8_lossy(&output.stdout);
 
-    // boot time in seconds
-    let boot_time_str = output_str
-        .split(',')
-        .next()
-        .unwrap_or("")
-        .split('=')
-        .nth(1)
-        .unwrap_or("")
-        .trim();
-    let boot_time = boot_time_str.parse::<i64>().unwrap_or(0);
+    let boot_time = output_str
+        .split_once(',')
+        .and_then(|(first, _)| first.split_once('='))
+        .and_then(|(_, time)| time.trim().parse::<i64>().ok())
+        .ok_or_else(|| Error::new(ErrorKind::InvalidData, "invalid boot time format"))?;
 
-    // current (s) since UNIX epoch
     let current_time = SystemTime::now()
         .duration_since(UNIX_EPOCH)
-        .unwrap()
+        .map_err(|_| Error::new(ErrorKind::Other, "system time error"))?
         .as_secs() as i64;
-    current_time - boot_time
+
+    Ok(current_time - boot_time)
 }
 
-fn format_duration(seconds: i64) -> String {
-    let years = seconds / (60 * 60 * 24 * 365);
-    let weeks = (seconds % (60 * 60 * 24 * 365)) / (60 * 60 * 24 * 7);
-    let days = (seconds % (60 * 60 * 24 * 7)) / (60 * 60 * 24);
-    let hours = (seconds % (60 * 60 * 24)) / (60 * 60);
-    let minutes = (seconds % (60 * 60)) / 60;
-    let seconds = seconds % 60;
-    let mut parts = vec![];
-    if years > 0 {
-        parts.push(format!("{}y", years));
+fn format_duration(total_seconds: i64) -> String {
+    const MINUTE: i64 = 60;
+    const HOUR: i64 = MINUTE * 60;
+    const DAY: i64 = HOUR * 24;
+    const WEEK: i64 = DAY * 7;
+    const YEAR: i64 = DAY * 365;
+
+    const UNITS: &[(i64, &str)] = &[
+        (YEAR, "y"),
+        (WEEK, "w"),
+        (DAY, "d"),
+        (HOUR, "h"),
+        (MINUTE, "m"),
+        (1, "s"),
+    ];
+
+    let mut remaining = total_seconds;
+    let mut parts = Vec::new();
+
+    for &(unit, suffix) in UNITS {
+        let value = remaining / unit;
+        remaining %= unit;
+
+        if value > 0 && !(suffix == "s" && total_seconds >= HOUR) {
+            parts.push(format!("{value}{suffix}"));
+        }
     }
-    if weeks > 0 {
-        parts.push(format!("{}w", weeks));
-    }
-    if days > 0 {
-        parts.push(format!("{}d", days));
-    }
-    if hours > 0 {
-        parts.push(format!("{}h", hours));
-    }
-    if minutes > 0 {
-        parts.push(format!("{}m", minutes));
-    }
-    if hours < 1 {
-        // hide seconds with longer uptimes
-        parts.push(format!("{}s", seconds));
-    }
+
     parts.join(" ")
 }
