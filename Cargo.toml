@@ -8,3 +8,5 @@ repository = "https://github.com/Sophed/ftch"
 license = "MIT"
 
 [dependencies]
+serde = { version = "1.0.228", features = ["derive"] }
+toml = "0.9.8"

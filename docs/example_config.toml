@@ -1,0 +1,8 @@
+[display]
+ascii = "stack"
+seperator = ": "
+modules = ["os", "desktop", "shell", "uptime"]
+
+[colours]
+primary = "\u001B[39m"
+accent = "\u001B[36m"
