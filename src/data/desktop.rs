@@ -23,9 +23,9 @@ fn linux() -> String {
 }
 
 fn windows() -> String {
-    "dwm.exe".to_string()
+    "dwm.exe".to_string() // maybe at some point detect if GlazeWM or komorebi is running and show those
 }
 
 fn mac() -> String {
-    "Aqua".to_string()
+    "Aqua".to_string() // macOS typically Aqua - check properly in a future release
 }

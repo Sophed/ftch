@@ -5,12 +5,10 @@ mod data;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let first_run = config::init_config()?;
-    let _cfg = {
-        if first_run {
-            config::config::default()
-        } else {
-            config::read_config()?
-        }
+    let _cfg = if first_run {
+        config::config::default()
+    } else {
+        config::read_config()?
     };
 
     print!("┌──────┐    ");
