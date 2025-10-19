@@ -2,21 +2,21 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize)]
 pub struct Config {
-    display: DisplayConfig,
-    colours: ColoursConfig,
+    pub display: DisplayConfig,
+    pub colours: ColoursConfig,
 }
 
 #[derive(Deserialize, Serialize)]
-struct DisplayConfig {
-    ascii: String,
-    seperator: String,
-    modules: Vec<String>,
+pub struct DisplayConfig {
+    pub ascii: String,
+    pub seperator: String,
+    pub modules: Vec<String>,
 }
 
 #[derive(Deserialize, Serialize)]
-struct ColoursConfig {
-    primary: String,
-    accent: String,
+pub struct ColoursConfig {
+    pub primary: String,
+    pub accent: String,
 }
 
 pub fn default() -> Config {

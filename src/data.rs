@@ -3,10 +3,8 @@ pub mod os;
 pub mod shell;
 pub mod uptime;
 
-const C_RESET: &str = "\x1B[39m";
-const C_CYAN: &str = "\x1B[36m";
-const ACCENT: &str = C_CYAN;
+const RESET: &str = "\x1B[39m";
 
-pub fn line(key: &str, value: String) {
-    println!("{ACCENT}{key}{C_RESET}: {value}")
+pub fn line(key: &str, value: String, seperator: &String, c_primary: &String, c_accent: &String) {
+    println!("{c_accent}{key}{c_primary}{seperator}{value}{RESET}")
 }
