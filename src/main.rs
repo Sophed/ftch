@@ -1,4 +1,5 @@
-use std::{collections::VecDeque, error::Error};
+use std::collections::VecDeque;
+use std::error::Error;
 
 mod ascii;
 mod config;

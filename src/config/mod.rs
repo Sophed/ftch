@@ -1,8 +1,9 @@
-use std::{
-    env::{self, VarError},
-    error::Error,
-    fs,
+use std::env::{
+    self,
+    VarError,
 };
+use std::error::Error;
+use std::fs;
 
 pub mod config;
 
