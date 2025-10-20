@@ -1,8 +1,9 @@
-use std::{
-    env::{self, VarError},
-    error::Error,
-    fs,
+use std::env::{
+    self,
+    VarError,
 };
+use std::error::Error;
+use std::fs;
 
 pub mod config;
 
@@ -11,7 +12,8 @@ pub fn config_dir() -> Result<String, VarError> {
         let root = env::var("USERPROFILE")?;
         Ok(format!("{}\\.ftch", root))
     } else {
-        let root = env::var("XDG_CONFIG_HOME")?;
+        let root = env::var("XDG_CONFIG_HOME")
+            .or_else(|_| env::var("HOME").map(|h| format!("{}/.config", h)))?;
         Ok(format!("{}/ftch", root))
     }
 }
