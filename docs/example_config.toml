@@ -4,5 +4,5 @@ seperator = ": "
 modules = ["os", "desktop", "shell", "uptime"]
 
 [colours]
-primary = "\u001B[39m"
-accent = "\u001B[36m"
+primary = "\u001B[39m" # reset
+accent = "\u001B[36m" # cyan
