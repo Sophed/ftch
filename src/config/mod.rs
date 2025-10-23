@@ -21,7 +21,7 @@ pub fn config_dir() -> Result<String, VarError> {
 pub fn init_config() -> Result<bool, Box<dyn Error>> {
     let dir = config_dir()?;
     if !fs::exists(&dir)? {
-        fs::create_dir(&dir)?;
+        fs::create_dir_all(&dir)?;
         let file = format!("{}/config.toml", dir);
         let cfg = config::default();
         let contents = toml::to_string(&cfg)?;
