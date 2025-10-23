@@ -29,12 +29,12 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     for line in ascii_art.lines() {
         let module_name = modules.pop_front().unwrap_or("");
-        
+
         if module_name.is_empty() {
             println!("{line:max_length$}");
             continue;
         }
-        
+
         let (key, value) = match module_name {
             "os" => ("OS", data::os::distro()),
             "desktop" => ("DE", data::desktop::desktop()),
@@ -42,7 +42,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             "uptime" => ("UP", data::uptime::uptime()),
             _ => return Err(format!("unknown module '{}'", module_name).into()),
         };
-        
+
         println!(
             "{line:max_length$}  {accent}{key}{primary}{seperator}{value}{RESET}",
             accent = cfg.colours.accent,
