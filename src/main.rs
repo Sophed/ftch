@@ -35,13 +35,17 @@ fn main() -> Result<(), Box<dyn Error>> {
             continue;
         }
 
-        let (key, value) = match module_name {
+        let (key, mut value) = match module_name {
             "os" => ("OS", data::os::distro()),
             "desktop" => ("DE", data::desktop::desktop()),
             "shell" => ("SH", data::shell::shell()),
             "uptime" => ("UP", data::uptime::uptime()),
             _ => return Err(format!("unknown module '{}'", module_name).into()),
         };
+
+        if cfg.display.lowercase {
+            value = value.to_lowercase();
+        }
 
         println!(
             "{line:max_length$}  {accent}{key}{primary}{seperator}{value}{RESET}",

@@ -34,7 +34,17 @@ pub fn init_config() -> Result<bool, Box<dyn Error>> {
 
 pub fn read_config() -> Result<config::Config, Box<dyn Error>> {
     let file = format!("{}/config.toml", config_dir()?);
-    let contents = fs::read_to_string(file)?;
-    let cfg: config::Config = toml::from_str(contents.as_str())?;
-    Ok(cfg)
+    let contents = fs::read_to_string(&file)?;
+
+    match toml::from_str::<config::Config>(&contents) {
+        Ok(cfg) => Ok(cfg),
+        Err(_) => {
+            println!("[!] migrating config to latest version...");
+            let cfg = config::default();
+            let new_contents = toml::to_string(&cfg)?;
+            fs::write(&file, new_contents)?;
+            println!("[!] config migrated at: {file}");
+            Ok(cfg)
+        }
+    }
 }
