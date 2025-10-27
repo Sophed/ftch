@@ -2,6 +2,7 @@
 ascii = "stack"
 seperator = ": "
 modules = ["os", "desktop", "shell", "uptime"]
+lowercase = false
 
 [colours]
 primary = "\u001B[39m" # reset
