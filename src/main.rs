@@ -35,15 +35,18 @@ fn main() -> Result<(), Box<dyn Error>> {
             continue;
         }
 
-        let (key, mut value) = match module_name {
-            "os" => ("OS", data::os::distro()),
-            "desktop" => ("DE", data::desktop::desktop()),
-            "shell" => ("SH", data::shell::shell()),
-            "uptime" => ("UP", data::uptime::uptime()),
+        let (mut key, mut value) = match module_name {
+            "os" => ("OS".to_string(), data::os::distro()),
+            "desktop" => ("DE".to_string(), data::desktop::desktop()),
+            "shell" => ("SH".to_string(), data::shell::shell()),
+            "uptime" => ("UP".to_string(), data::uptime::uptime()),
             _ => return Err(format!("unknown module '{}'", module_name).into()),
         };
 
-        if cfg.display.lowercase {
+        if cfg.display.key_lowercase {
+            key = key.to_lowercase()
+        }
+        if cfg.display.value_lowercase {
             value = value.to_lowercase();
         }
 

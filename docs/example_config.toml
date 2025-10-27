@@ -2,7 +2,8 @@
 ascii = "stack"
 seperator = ": "
 modules = ["os", "desktop", "shell", "uptime"]
-lowercase = false
+key_lowercase = false # true: "os", false: "OS"
+value_lowercase = false # true: "debian", false: "Debian"
 
 [colours]
 primary = "\u001B[39m" # reset
