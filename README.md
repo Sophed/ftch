@@ -13,6 +13,8 @@ Config file can be found in `XDG_CONFIG_HOME`, usually just `~/.config/ftch/conf
 ascii = "stack"
 seperator = ": "
 modules = ["os", "desktop", "shell", "uptime"]
+key_lowercase = false # true: "os", false: "OS"
+value_lowercase = false # true: "debian", false: "Debian"
 
 [colours]
 primary = "\u001B[39m" # reset
