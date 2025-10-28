@@ -14,7 +14,8 @@ pub struct DisplayConfig {
     pub ascii: String,
     pub seperator: String,
     pub modules: Vec<String>,
-    pub lowercase: bool,
+    pub key_lowercase: bool,
+    pub value_lowercase: bool,
 }
 
 #[derive(Deserialize, Serialize)]
@@ -34,7 +35,8 @@ pub fn default() -> Config {
                 "shell".to_string(),
                 "uptime".to_string(),
             ],
-            lowercase: false,
+            key_lowercase: false,
+            value_lowercase: false,
         },
         colours: ColoursConfig {
             primary: "\x1B[39m".to_string(),
